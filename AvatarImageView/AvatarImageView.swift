@@ -145,6 +145,19 @@ open class AvatarImageView: UIImageView {
         setNeedsDisplay()
     }
 
+    override open func layoutSubviews() {
+        switch configuration.shape {
+        case .circle:
+            layer.masksToBounds = true
+            layer.cornerRadius = bounds.size.width/2
+            break
+        case .mask(let image):
+            mask(layer: layer, withImage: image)
+        default:
+            break
+        }
+    }
+
 
     // MARK:- Utilities
     
