@@ -10,15 +10,15 @@ import Foundation
 
 final class ColorCache<ValueType: AnyObject> {
     
-    private let cache = NSCache()
+    fileprivate let cache: NSCache<ValueType,AnyObject> = NSCache<ValueType,AnyObject>()
     
-    lazy var notificationCenter = NSNotificationCenter.defaultCenter()
-    lazy var application = UIApplication.sharedApplication()
+    lazy var notificationCenter = NotificationCenter.default
+    lazy var application = UIApplication.shared
     
     init() {
         notificationCenter.addObserver(self,
                                        selector: #selector(clear),
-                                       name: UIApplicationDidReceiveMemoryWarningNotification,
+                                       name: NSNotification.Name.UIApplicationDidReceiveMemoryWarning,
                                        object: application)
     }
     
@@ -26,16 +26,16 @@ final class ColorCache<ValueType: AnyObject> {
         notificationCenter.removeObserver(self)
     }
     
-    subscript(key: Int) -> ValueType? {
+    subscript(key: ValueType) -> ValueType? {
         get {
-            return cache.objectForKey(key) as? ValueType
+            return cache.object(forKey: key) as? ValueType
         }
         set {
             if let value: ValueType = newValue {
                 cache.setObject(value, forKey: key)
             }
             else {
-                cache.removeObjectForKey(key)
+                cache.removeObject(forKey: key)
             }
         }
     }
